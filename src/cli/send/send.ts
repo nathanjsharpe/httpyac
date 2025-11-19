@@ -4,11 +4,21 @@ import { promises as fs } from 'fs';
 import type { Options } from 'globby';
 import { sep } from 'path';
 
-import { send } from '../../httpYacApi';
-import { Logger } from '../../io';
-import * as models from '../../models';
-import { HttpFileStore } from '../../store';
-import * as utils from '../../utils';
+import { send } from '@/httpYacApi';
+import { Logger } from '@/io';
+import {
+  ConsoleLogHandler,
+  EnvironmentConfig,
+  HttpFile,
+  HttpFileSendContext,
+  HttpFileStoreOptions,
+  RepeatOrder,
+  RequestLogger,
+  RequestLoggerFactoryOptions,
+  StreamLogger,
+} from '@/models';
+import { HttpFileStore } from '@/store';
+import * as utils from '@/utils';
 import { toSendJsonOutput } from './jsonOutput';
 import { getLogLevel, OutputType, SendFilterOptions, SendOptions } from './options';
 import { createCliPluginRegister } from './plugin';
@@ -85,7 +95,7 @@ async function execute(fileNames: Array<string>, options: SendOptions): Promise<
   }
 }
 
-function reportOutput(context: Omit<models.HttpFileSendContext, 'httpFile'>, options: SendOptions) {
+function reportOutput(context: Omit<HttpFileSendContext, 'httpFile'>, options: SendOptions) {
   const processedHttpRegions = context.processedHttpRegions || [];
 
   const cliJsonOutput = toSendJsonOutput(processedHttpRegions, options);
@@ -116,12 +126,12 @@ function reportOutput(context: Omit<models.HttpFileSendContext, 'httpFile'>, opt
 }
 
 export function convertCliOptionsToContext(cliOptions: SendOptions) {
-  const context: Omit<models.HttpFileSendContext, 'httpFile'> = {
+  const context: Omit<HttpFileSendContext, 'httpFile'> = {
     activeEnvironment: cliOptions.env,
     repeat: cliOptions.repeat
       ? {
           count: cliOptions.repeat,
-          type: cliOptions.repeatMode === 'sequential' ? models.RepeatOrder.sequential : models.RepeatOrder.parallel,
+          type: cliOptions.repeatMode === 'sequential' ? RepeatOrder.sequential : RepeatOrder.parallel,
         }
       : undefined,
     config: {
@@ -145,7 +155,7 @@ export function convertCliOptionsToContext(cliOptions: SendOptions) {
   return context;
 }
 
-export function initRequestLogger(cliOptions: SendOptions, context: Omit<models.HttpFileSendContext, 'httpFile'>) {
+export function initRequestLogger(cliOptions: SendOptions, context: Omit<HttpFileSendContext, 'httpFile'>) {
   const scriptConsole = new Logger({
     level: getLogLevel(cliOptions),
     onlyFailedTests: cliOptions.filter === SendFilterOptions.onlyFailed,
@@ -164,13 +174,13 @@ export function initRequestLogger(cliOptions: SendOptions, context: Omit<models.
   }
 }
 
-async function getHttpFiles(fileNames: Array<string>, options: SendOptions, config: models.EnvironmentConfig) {
-  const httpFiles: models.HttpFile[] = [];
+async function getHttpFiles(fileNames: Array<string>, options: SendOptions, config: EnvironmentConfig) {
+  const httpFiles: HttpFile[] = [];
   const httpFileStore = new HttpFileStore({
     cli: createCliPluginRegister(!!options.bail),
   });
 
-  const parseOptions: models.HttpFileStoreOptions = {
+  const parseOptions: HttpFileStoreOptions = {
     workingDir: process.cwd(),
     config,
   };
@@ -207,7 +217,7 @@ async function queryGlobbyPattern(fileName: string) {
   return await globby(fileName.replace(/\\/gu, '/'), globOptions);
 }
 
-function getStreamLogger(options: SendOptions): models.StreamLogger | undefined {
+function getStreamLogger(options: SendOptions): StreamLogger | undefined {
   if (options.output !== 'none') {
     return async function logStream(type, response) {
       const data = Buffer.isBuffer(response.body) ? response.body.toString('utf-8') : response.body;
@@ -219,9 +229,9 @@ function getStreamLogger(options: SendOptions): models.StreamLogger | undefined 
 
 function getRequestLogger(
   options: SendOptions,
-  config: models.EnvironmentConfig | undefined,
-  logger: models.ConsoleLogHandler
-): models.RequestLogger | undefined {
+  config: EnvironmentConfig | undefined,
+  logger: ConsoleLogHandler
+): RequestLogger | undefined {
   const cliLoggerOptions = {
     onlyFailed: options.filter === SendFilterOptions.onlyFailed,
     responseBodyPrettyPrint: !options.raw,
@@ -245,9 +255,9 @@ function getRequestLogger(
 }
 function getRequestLoggerOptions(
   output: OutputType | undefined,
-  ...options: Array<models.RequestLoggerFactoryOptions | undefined>
-): models.RequestLoggerFactoryOptions | undefined {
-  let result: models.RequestLoggerFactoryOptions | undefined;
+  ...options: Array<RequestLoggerFactoryOptions | undefined>
+): RequestLoggerFactoryOptions | undefined {
+  let result: RequestLoggerFactoryOptions | undefined;
   switch (output) {
     case 'body':
       result = {

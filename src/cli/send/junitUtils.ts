@@ -1,8 +1,8 @@
 import { DOMImplementation, Document, Element } from '@xmldom/xmldom';
 import { EOL } from 'os';
 import { formatXml } from 'xmldom-format';
-import { TestResult, TestResultStatus } from '../../models';
-import * as utils from '../../utils';
+import { TestResult, TestResultStatus } from '@/models';
+import { errorToString, toString } from '@/utils';
 import { SendJsonOutput, SendOutputRequest } from './jsonOutput';
 
 /**
@@ -105,7 +105,7 @@ function transformTestResultToTestcase(
     root.appendChild(failureNode);
     setAttribute(failureNode, 'message', testResult.message);
     setAttribute(failureNode, 'type', testResult.error?.errorType ?? 'unknown');
-    failureNode.textContent = utils.errorToString(testResult.error?.error) || '';
+    failureNode.textContent = errorToString(testResult.error?.error) || '';
   } else if (testResult.status === TestResultStatus.SKIPPED) {
     root.appendChild(document.createElement('skipped'));
   }
@@ -121,7 +121,7 @@ function transformToProperties(document: Document, properties: Record<string, st
       hasChild = true;
       const propertyNode = document.createElement('property');
       propertyNode.setAttribute('name', key);
-      propertyNode.setAttribute('value', utils.toString(value) || '');
+      propertyNode.setAttribute('value', toString(value) || '');
       root.appendChild(propertyNode);
     }
   }

@@ -1,7 +1,7 @@
-import { HttpResponse, ProcessedHttpRegion, TestResult, TestResultStatus } from '../../models';
-import * as utils from '../../utils';
+import { HttpResponse, ProcessedHttpRegion, TestResult, TestResultStatus } from '@/models';
+import { toString } from '@/utils';
 import { SendFilterOptions, SendOptions } from './options';
-import { fileProvider } from '../../io';
+import { fileProvider } from '@/io';
 
 export interface SendJsonOutput {
   _meta: {
@@ -58,10 +58,10 @@ export function toSendJsonOutput(
     const result: SendOutputRequest = {
       fileName: fileProvider.fsPath(httpRegion.filename) || fileProvider.toString(httpRegion.filename),
       response: convertResponse(httpRegion.response, output),
-      name: utils.toString(httpRegion.metaData?.name) || httpRegion.symbol.name,
+      name: toString(httpRegion.metaData?.name) || httpRegion.symbol.name,
       line: httpRegion.symbol.startLine,
-      title: utils.toString(httpRegion.metaData?.title),
-      description: utils.toString(httpRegion.metaData?.description),
+      title: toString(httpRegion.metaData?.title),
+      description: toString(httpRegion.metaData?.description),
       testResults: httpRegion.testResults,
       timestamp: new Date(performance.timeOrigin + httpRegion.start).toISOString(),
       duration: httpRegion.duration,

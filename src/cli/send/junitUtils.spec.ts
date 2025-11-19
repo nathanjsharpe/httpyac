@@ -1,4 +1,4 @@
-import { TestResultStatus } from '../../models';
+import { TestResultStatus } from '@/models';
 import { transformToJunit } from './junitUtils';
 
 describe('transformToJunit', () => {

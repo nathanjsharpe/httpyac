@@ -1,11 +1,11 @@
-import * as models from '../../models';
-import * as utils from '../../utils';
+import { HttpRegion, HttpFile } from '@/models';
+import { ensureString, isString } from '@/utils';
 import { SendOptions } from './options';
 // Use type-only imports here that will be removed during build.
 // We dynamically import the actual modules at runtime when needed.
 import type { search as searchPrompt } from '@inquirer/prompts';
 
-type SelectActionResult = Array<{ httpRegions?: Array<models.HttpRegion>; httpFile: models.HttpFile }>;
+type SelectActionResult = Array<{ httpRegions?: Array<HttpRegion>; httpFile: HttpFile }>;
 
 // Dependencies that can be injected for testing
 type Dependencies = {
@@ -16,7 +16,7 @@ type Dependencies = {
 };
 
 export async function selectHttpFiles(
-  httpFiles: Array<models.HttpFile>,
+  httpFiles: Array<HttpFile>,
   cliOptions: SendOptions,
   deps?: Dependencies
 ): Promise<SelectActionResult> {
@@ -32,7 +32,7 @@ export async function selectHttpFiles(
   return await selectManualHttpFiles(httpFiles, deps);
 }
 
-function selectHttpFilesWithArgs(httpFiles: Array<models.HttpFile>, cliOptions: SendOptions) {
+function selectHttpFilesWithArgs(httpFiles: Array<HttpFile>, cliOptions: SendOptions) {
   const result: SelectActionResult = [];
 
   for (const httpFile of httpFiles) {
@@ -58,37 +58,34 @@ function selectHttpFilesWithArgs(httpFiles: Array<models.HttpFile>, cliOptions: 
   return result;
 }
 
-function hasName(httpRegion: models.HttpRegion, name: string | undefined) {
+function hasName(httpRegion: HttpRegion, name?: string) {
   if (name) {
     return httpRegion.metaData?.name === name;
   }
   return false;
 }
 
-function isLine(httpRegion: models.HttpRegion, line: number | undefined) {
-  if (line !== undefined) {
+function isLine(httpRegion: HttpRegion, line?: number) {
+  if (line) {
     return line && httpRegion.symbol.startLine <= line && httpRegion.symbol.endLine >= line;
   }
   return false;
 }
 
-function hasTag(httpRegion: models.HttpRegion, tags: Array<string> | undefined) {
-  if (tags && utils.isString(httpRegion.metaData?.tag)) {
+function hasTag(httpRegion: HttpRegion, tags?: Array<string>) {
+  if (tags && isString(httpRegion.metaData?.tag)) {
     const metaDataTag = httpRegion.metaData.tag?.split(',').map(t => t.trim());
     return tags.some(t => metaDataTag.includes(t));
   }
   return false;
 }
 
-async function selectManualHttpFiles(
-  httpFiles: Array<models.HttpFile>,
-  deps?: Dependencies
-): Promise<SelectActionResult> {
+async function selectManualHttpFiles(httpFiles: Array<HttpFile>, deps?: Dependencies): Promise<SelectActionResult> {
   const httpRegionMap: Record<string, SelectActionResult> = {};
   const hasManyFiles = httpFiles.length > 1;
   const cwd = `${process.cwd()}`;
   for (const httpFile of httpFiles) {
-    const fileName = utils.ensureString(httpFile.fileName)?.replace(cwd, '.');
+    const fileName = ensureString(httpFile.fileName)?.replace(cwd, '.');
     httpRegionMap[hasManyFiles ? `${fileName}: all` : 'all'] = [{ httpFile }];
 
     for (const httpRegion of httpFile.httpRegions) {

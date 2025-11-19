@@ -1,4 +1,4 @@
-import { LogLevel } from '../../models';
+import { LogLevel } from '@/models';
 
 export enum SendFilterOptions {
   onlyFailed = 'only-failed',
