@@ -1,16 +1,16 @@
-import { HookTriggerContext } from 'hookpoint';
+import { HookInterceptor, HookTriggerContext } from 'hookpoint';
 
-import * as models from '../../../models';
+import { ProcessorContext, TestResultStatus } from '@/models';
 
-export const testExitCodeInterceptor = {
-  id: 'testExitCode',
+export class TestExitCodeInterceptor implements HookInterceptor<[ProcessorContext], boolean> {
+  id = 'testExitCode';
 
-  onError: async function onError(): Promise<boolean | undefined> {
+  async onError(): Promise<boolean> {
     process.exitCode = 10;
     return true;
-  },
+  }
 
-  afterTrigger: async function bail(hookContext: HookTriggerContext<[models.ProcessorContext], boolean>) {
+  async afterTrigger(hookContext: HookTriggerContext<[ProcessorContext], boolean>) {
     const context = hookContext.args[0];
 
     if (context.httpRegion.testResults === undefined) {
@@ -21,11 +21,11 @@ export const testExitCodeInterceptor = {
     let hasFailedTestResult = false;
 
     for (const testResult of context.httpRegion.testResults) {
-      if (testResult.status === models.TestResultStatus.ERROR) {
+      if (testResult.status === TestResultStatus.ERROR) {
         hasErroredTestResult = true;
         break;
       }
-      if (testResult.status === models.TestResultStatus.FAILED) {
+      if (testResult.status === TestResultStatus.FAILED) {
         hasFailedTestResult = true;
       }
     }
@@ -37,5 +37,5 @@ export const testExitCodeInterceptor = {
     }
 
     return true;
-  },
-};
+  }
+}
