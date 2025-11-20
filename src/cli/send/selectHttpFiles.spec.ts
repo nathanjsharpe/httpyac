@@ -1,4 +1,4 @@
-import { HttpFile, HttpRegion } from '@/store';
+import { HttpFile, HttpRegion } from '../../store';
 import { selectHttpFiles } from './selectHttpFiles';
 
 function createHttpFile(name: string, httpRegions: Array<Record<string, string>>) {

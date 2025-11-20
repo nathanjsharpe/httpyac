@@ -1,5 +1,5 @@
-import { HttpRegion, HttpFile } from '@/models';
-import { ensureString, isString } from '@/utils';
+import { HttpRegion, HttpFile } from '../../models';
+import { ensureString, isString } from '../../utils';
 import { SendOptions } from './options';
 // Use type-only imports here that will be removed during build.
 // We dynamically import the actual modules at runtime when needed.

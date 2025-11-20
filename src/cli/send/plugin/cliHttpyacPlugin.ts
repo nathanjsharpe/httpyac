@@ -1,4 +1,4 @@
-import { HttpyacHooksApi } from '@/models';
+import { HttpyacHooksApi } from '../../../models';
 import { BailOnFailedTestInterceptor } from './bailOnFailedTestInterceptor';
 import { LoggerFlushInterceptor } from './loggerFlushInterceptor';
 import { TestExitCodeInterceptor } from './testExitCodeInterceptor';

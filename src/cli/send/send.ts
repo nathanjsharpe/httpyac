@@ -4,8 +4,8 @@ import { promises as fs } from 'fs';
 import type { Options } from 'globby';
 import { sep } from 'path';
 
-import { send } from '@/httpYacApi';
-import { Logger } from '@/io';
+import { send } from '../../httpYacApi';
+import { Logger } from '../../io';
 import {
   ConsoleLogHandler,
   EnvironmentConfig,
@@ -16,9 +16,9 @@ import {
   RequestLogger,
   RequestLoggerFactoryOptions,
   StreamLogger,
-} from '@/models';
-import { HttpFileStore } from '@/store';
-import * as utils from '@/utils';
+} from '../../models';
+import { HttpFileStore } from '../../store';
+import * as utils from '../../utils';
 import { toSendJsonOutput } from './jsonOutput';
 import { getLogLevel, OutputType, SendFilterOptions, SendOptions } from './options';
 import { createCliPluginRegister } from './plugin';

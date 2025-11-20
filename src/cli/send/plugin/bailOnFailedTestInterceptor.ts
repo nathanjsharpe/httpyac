@@ -1,7 +1,7 @@
 import { HookInterceptor, HookTriggerContext } from 'hookpoint';
 
-import { ProcessorContext, TestResultStatus } from '@/models';
-import { addSkippedTestResult } from '@/utils';
+import { ProcessorContext, TestResultStatus } from '../../../models';
+import { addSkippedTestResult } from '../../../utils';
 
 let bailInBeforeLoop = false;
 

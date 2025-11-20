@@ -1,8 +1,8 @@
 import { DOMImplementation, Document, Element } from '@xmldom/xmldom';
 import { EOL } from 'os';
 import { formatXml } from 'xmldom-format';
-import { TestResult, TestResultStatus } from '@/models';
-import { errorToString, toString } from '@/utils';
+import { TestResult, TestResultStatus } from '../../models';
+import { errorToString, toString } from '../../utils';
 import { SendJsonOutput, SendOutputRequest } from './jsonOutput';
 
 /**

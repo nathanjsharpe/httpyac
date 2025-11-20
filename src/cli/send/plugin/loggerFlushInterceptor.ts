@@ -1,6 +1,6 @@
 import { HookInterceptor, HookTriggerContext } from 'hookpoint';
 
-import { ProcessorContext } from '@/models';
+import { ProcessorContext } from '../../../models';
 
 export class LoggerFlushInterceptor implements HookInterceptor<[ProcessorContext], boolean> {
   id = 'loggerFlush';

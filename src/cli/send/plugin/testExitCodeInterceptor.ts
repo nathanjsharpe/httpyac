@@ -1,6 +1,6 @@
 import { HookInterceptor, HookTriggerContext } from 'hookpoint';
 
-import { ProcessorContext, TestResultStatus } from '@/models';
+import { ProcessorContext, TestResultStatus } from '../../../models';
 
 export class TestExitCodeInterceptor implements HookInterceptor<[ProcessorContext], boolean> {
   id = 'testExitCode';

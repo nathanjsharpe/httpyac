@@ -1,4 +1,4 @@
-import { ParserContext } from '@/models';
+import { ParserContext } from '../models';
 
 import { parseRequestHeaderFactory } from './parserUtils';
 

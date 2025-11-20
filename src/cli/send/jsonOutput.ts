@@ -1,7 +1,7 @@
-import { HttpResponse, ProcessedHttpRegion, TestResult, TestResultStatus } from '@/models';
-import { toString } from '@/utils';
+import { HttpResponse, ProcessedHttpRegion, TestResult, TestResultStatus } from '../../models';
+import { toString } from '../../utils';
 import { SendFilterOptions, SendOptions } from './options';
-import { fileProvider } from '@/io';
+import { fileProvider } from '../../io';
 
 export interface SendJsonOutput {
   _meta: {
